@@ -2,7 +2,7 @@
 
 This is a simple yet powerful web application built with Python Flask that helps users evaluate the strength of their passwords and provides suggestions to improve them. It uses custom logic to score the password based on length, case, digits, symbols, and overall complexity.
 
-![Password Checker UI](./password strength checker.png)
+![Password Checker UI] (./password strength checker.png)
 
 ---
 
