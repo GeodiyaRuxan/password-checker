@@ -1,50 +1,69 @@
 from flask import Flask, render_template, request
-
 import re
 
 app = Flask(__name__)
 
+# Basic list of common passwords (expandable)
+COMMON_PASSWORDS = ['password', '123456', '12345678', 'qwerty', 'abc123', 'letmein', '111111']
+
 def check_password_strength(password):
+    feedback = []
     score = 0
-    feedback = []
 
-    if len(password) >= 8:
+    # Length check
+    if len(password) >= 12:
+        score += 2
+    elif len(password) >= 8:
         score += 1
     else:
-        feedback.append("Password should be at least 8 characters long.")
+        feedback.append("Use at least 8–12 characters.")
 
-    if re.search(r"[A-Z]", password):
+    # Upper and lowercase check
+    if re.search(r'[A-Z]', password) and re.search(r'[a-z]', password):
         score += 1
     else:
-        feedback.append("Add at least one uppercase letter.")
+        feedback.append("Use a combination of uppercase and lowercase letters.")
 
-    if re.search(r"[a-z]", password):
+    # Numbers and symbols
+    if re.search(r'\d', password) and re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
         score += 1
     else:
-        feedback.append("Add at least one lowercase letter.")
+        feedback.append("Include numbers and special symbols.")
 
-    if re.search(r"\d", password):
-        score += 1
+    # Common password detection
+    if password.lower() in COMMON_PASSWORDS:
+        feedback.append("Avoid common passwords like 'password', '123456', etc.")
+        score = 0
+
+    # Pattern detection
+    if re.search(r'(.)\1{2,}', password) or re.search(r'123|abc|qwerty', password.lower()):
+        feedback.append("Avoid repeated characters or simple sequences like 'abc123'.")
+        score -= 1
+
+    # Final strength level
+    if score >= 4:
+        strength = "Strong"
+        color = "green"
+    elif score == 3:
+        strength = "Moderate"
+        color = "orange"
     else:
-        feedback.append("Add at least one digit.")
+        strength = "Weak"
+        color = "red"
 
-    if re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
-        score += 1
-    else:
-        feedback.append("Add at least one special character (!@#$%^&* etc).")
+    return strength, feedback, color
 
-    return score, feedback
-
-@app.route("/", methods=["GET", "POST"])
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    result = None
+    strength = None
     feedback = []
-    if request.method == "POST":
-        password = request.form.get("password")
-        score, feedback = check_password_strength(password)
-        result = {"score": score, "max_score": 5, "feedback": feedback}
+    color = "black"
 
-    return render_template("index.html", result=result)
+    if request.method == 'POST':
+        password = request.form['password']
+        strength, feedback, color = check_password_strength(password)
 
-if __name__ == "__main__":
+    return render_template('index.html', strength=strength, feedback=feedback, color=color)
+
+if __name__ == '__main__':
     app.run(debug=True)

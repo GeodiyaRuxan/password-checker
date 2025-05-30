@@ -1,111 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Password Strength Checker</title>
-  <style>
-    body {
-      background: linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 0;
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-
-    .container {
-      background: rgba(0, 0, 0, 0.4);
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-      text-align: center;
-      width: 350px;
-    }
-
-    h1 {
-      margin-bottom: 20px;
-      font-size: 24px;
-      color: #fff;
-    }
-
-    input[type="password"] {
-      width: 100%;
-      padding: 10px;
-      border-radius: 6px;
-      border: none;
-      margin-bottom: 15px;
-      font-size: 16px;
-    }
-
-    button {
-      background-color: #ff7f50;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      font-size: 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    button:hover {
-      background-color: #ff6347;
-    }
-
-    .result {
-      margin-top: 20px;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 15px;
-      border-radius: 8px;
-    }
-
-    .strong {
-      color: #00ffb7;
-      font-weight: bold;
-    }
-
-    .weak {
-      color: #ffd700;
-      font-weight: bold;
-    }
-
-    ul {
-      text-align: left;
-      margin-top: 10px;
-    }
-
-    li {
-      margin-bottom: 6px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Password Strength Checker</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #74ebd5, #ACB6E5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 400px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        input[type="password"] {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 1rem;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 20px;
+            background: #007bff;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .feedback {
+            margin-top: 1rem;
+            text-align: left;
+        }
+        .feedback ul {
+            padding-left: 1.2rem;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🔐 Password Strength Checker</h1>
-    <form method="POST">
-      <input type="password" name="password" placeholder="Enter your password" required />
-      <button type="submit">Check Strength</button>
-    </form>
+    <div class="container">
+        <h2>🔐 Password Strength Checker</h2>
+        <form method="POST">
+            <input type="password" name="password" placeholder="Enter password..." required>
+            <br>
+            <button type="submit">Check Strength</button>
+        </form>
 
-    {% if result %}
-    <div class="result">
-      <p>Strength Score: {{ result.score }} / {{ result.max_score }}</p>
-      {% if result.score == result.max_score %}
-      <p class="strong">✅ Strong password!</p>
-      {% else %}
-      <p class="weak">⚠️ Weak password. Suggestions:</p>
-      <ul>
-        {% for f in result.feedback %}
-        <li>{{ f }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %}
+        {% if strength %}
+        <h3 style="color: {{ color }};">Strength: {{ strength }}</h3>
+        {% endif %}
+
+        {% if feedback %}
+        <div class="feedback">
+            <ul>
+            {% for msg in feedback %}
+                <li>{{ msg }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
-  </div>
 </body>
 </html>
